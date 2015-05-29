@@ -1,0 +1,14 @@
+<launch>
+<arg name="cam_name" default="haptic1" />
+<arg name="ip_addr" default="10.208.78.70" />
+<arg name="stream" default="" />
+<arg name="modality_local" default="water" />
+  <node pkg="video_tools" type="trendnet_streamer" name="$(arg cam_name)">
+    <param name="config/camera_name" value="$(arg cam_name)" />
+    <param name="config/ip_addr"     value="$(arg ip_addr)" />
+    <param name="config/stream"      value="$(arg stream)" />
+    <param name="config/camera_info_url" value="package://bluhaptics_ipcameras/calibrations/${NAME}_$(arg modality_local).yaml" />
+    <remap from="camera/image_raw" to="$(arg cam_name)/image_raw" />
+    <remap from="/set_camera_info" to="$(arg cam_name)/set_camera_info" />
+  </node>
+</launch>
