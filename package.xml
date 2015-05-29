@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>am_video_tools</name>
+  <name>video_tools</name>
   <version>0.0.0</version>
-  <description>The am_video_tools package</description>
+  <description>The video_tools package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->

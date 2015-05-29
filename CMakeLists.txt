@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(am_video_sources)
+project(video_tools)
 
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED core highgui videoio imgproc )
 
 
 ################################################
@@ -97,23 +97,8 @@ include_directories(
 add_executable( trendnet_streamer
   src/trendnet_streamer.cpp )
 target_link_libraries(trendnet_streamer
-  ${catkin_LIBRARIES})
-
-add_executable( opencv_camera
-  src/opencv_camera.cpp )
-target_link_libraries( opencv_camera
-  ${catkin_LIBRARIES})
-
-add_executable( video_player
-  src/video_player.cpp )
-target_link_libraries( video_player
-  ${catkin_LIBRARIES})
-
-add_executable( extract_when_static 
-  src/extract_when_static.cpp )
-target_link_libraries( extract_when_static
-  ${catkin_LIBRARIES})
-
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES} )
 
 
 ## Add cmake target dependencies of the executable/library
@@ -149,11 +134,9 @@ target_link_libraries( extract_when_static
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(DIRECTORY launch/
+   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
 
 #############
 ## Testing ##
