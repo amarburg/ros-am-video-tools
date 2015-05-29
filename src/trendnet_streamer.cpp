@@ -17,6 +17,9 @@
 
 #include "config.h"
 
+#define TN_DEFAULT_IPADDR   "10.0.95.1"
+#define TN_DEFAULT_STREAM    ""
+
 using namespace cv;
 
 int main(int argc, char **argv) {
@@ -24,15 +27,28 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "trendnet_streamer" );
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
-  image_transport::Publisher pub = it.advertise("camera/image", 1);
-  image_transport::Publisher pubMono = it.advertise("camera/mono_image", 1); // I suspect this isn't a very RoS way to do this...  should be re-published by another node?
+  image_transport::Publisher pub = it.advertise("camera/raw_image", 1);
   
   const std::string userName( TN_USERNAME ),
-                    password( TN_PASSWD ),
-                    address( TN_IPADDR  ),
-                    path( "" );
-  const std::string videoStreamAddress = "rtsp://" + userName + ":" + password + "@" + address + "/" + path;
+                    password( TN_PASSWD );
+  std::string address, stream;
+
+  if( ! ros::param::get("config/ip_addr", address ) ) {
+    ROS_INFO("Using default IP address");
+    address = TN_DEFAULT_IPADDR;
+  }
+
+  if( ! ros::param::get("config/stream", stream ) ) {
+    ROS_INFO("Using default stream");
+    address = TN_DEFAULT_STREAM;
+  }
+
+
+  const std::string videoStreamAddress = "rtsp://" + userName + ":" + password + "@" + address + "/" + stream;
   //const std::string videoStreamAddress = "rtp://127.0.0.1:12346/";
+  
+  ROS_INFO("Opening %s", videoStreamAddress.c_str() );
+
 
   VideoCapture cap( videoStreamAddress );
 
@@ -53,10 +69,10 @@ int main(int argc, char **argv) {
       msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
       pub.publish(msg);
 
-      Mat grey;
-      cv::cvtColor( image, grey, COLOR_BGR2GRAY );
-
-      pubMono.publish( cv_bridge::CvImage( std_msgs::Header(), "mono8", grey ).toImageMsg() );
+//Mat grey;
+//      cv::cvtColor( image, grey, COLOR_BGR2GRAY );
+//
+//      pubMono.publish( cv_bridge::CvImage( std_msgs::Header(), "mono8", grey ).toImageMsg() );
 
     }
 
