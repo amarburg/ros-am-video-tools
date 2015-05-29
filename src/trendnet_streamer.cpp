@@ -25,7 +25,7 @@ using namespace cv;
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "trendnet_streamer" );
-  ros::NodeHandle nh;
+  ros::NodeHandle nh( ros::this_node::getName() );;
   image_transport::ImageTransport it(nh);
   image_transport::Publisher pub = it.advertise("camera/image_raw", 1);
   
@@ -33,22 +33,28 @@ int main(int argc, char **argv) {
                     password( TN_PASSWD );
   std::string address, stream;
 
-  if( ! ros::param::get("config/ip_addr", address ) ) {
+
+  std::string key;
+  if( nh.searchParam("ip_addr", key ) ) {
+    ROS_INFO("Found it at: %s", key.c_str() );
+  }
+
+  if( ! nh.getParam("config/ip_addr", address ) ) {
     ROS_INFO("Using default IP address");
     address = TN_DEFAULT_IPADDR;
   }
 
-  if( ! ros::param::get("config/stream", stream ) ) {
+  if( ! nh.getParam("config/stream", stream ) ) {
     ROS_INFO("Using default stream");
-    address = TN_DEFAULT_STREAM;
+    stream = TN_DEFAULT_STREAM;
   }
+
 
 
   const std::string videoStreamAddress = "rtsp://" + userName + ":" + password + "@" + address + "/" + stream;
   //const std::string videoStreamAddress = "rtp://127.0.0.1:12346/";
   
   ROS_INFO("Opening %s", videoStreamAddress.c_str() );
-
 
   VideoCapture cap( videoStreamAddress );
 
@@ -62,7 +68,7 @@ int main(int argc, char **argv) {
   Mat image;
   sensor_msgs::ImagePtr msg;
 
-  ros::Rate loop_rate(100);
+  ros::Rate loop_rate(1000);
   while (nh.ok()) {
     if( cap.read( image ) ) {
 
@@ -78,6 +84,7 @@ int main(int argc, char **argv) {
 
     ros::spinOnce();
     loop_rate.sleep();
+
   }
 }
 
