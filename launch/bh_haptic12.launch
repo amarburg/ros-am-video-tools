@@ -1,0 +1,17 @@
+<launch>
+<!-- Set this to "air" or "water" depending on where the cameras are operating -->
+<arg name="modality" default="air"/>
+
+<include file="$(find video_tools)/launch/bh_haptic1.launch">
+<arg name="cam_name" value="haptic1" />
+<arg name="ip_addr" value="10.95.191.19" />
+<arg name="modality_local" value="$(arg modality)"/>
+</include>
+
+<include file="$(find video_tools)/launch/bh_haptic1.launch">
+<arg name="cam_name" value="haptic2" />
+<arg name="ip_addr" value="10.95.191.20" />
+<arg name="modality_local" value="$(arg modality)"/>
+</include>
+
+</launch>
