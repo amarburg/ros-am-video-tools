@@ -100,6 +100,14 @@ target_link_libraries(trendnet_streamer
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES} )
 
+add_executable( video_player
+  src/video_player.cpp )
+target_link_libraries(video_player
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES} )
+
+
+
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

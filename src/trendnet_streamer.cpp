@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "trendnet_streamer" );
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
-  image_transport::Publisher pub = it.advertise("camera/raw_image", 1);
+  image_transport::Publisher pub = it.advertise("camera/image_raw", 1);
   
   const std::string userName( TN_USERNAME ),
                     password( TN_PASSWD );
