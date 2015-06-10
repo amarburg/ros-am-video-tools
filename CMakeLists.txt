@@ -69,10 +69,12 @@ find_package(OpenCV REQUIRED core highgui videoio imgproc )
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+
 #  INCLUDE_DIRS include
 #  LIBRARIES trendnet_streamer
-  CATKIN_DEPENDS cv_bridge image_transport roscpp
+
+catkin_package(
+  CATKIN_DEPENDS cv_bridge camera_info_manager image_transport roscpp 
   DEPENDS OpenCV
 )
 
@@ -85,6 +87,8 @@ catkin_package(
 # include_directories(include)
 include_directories(
   include
+  # Catkin refuses to find this path automatically...
+  /Users/aaron/workspace/ros/ros_ws/src/image_common/camera_info_manager/include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -109,6 +113,7 @@ add_executable( stereo_streamer
   src/stereo_streamer.cpp )
 target_link_libraries(stereo_streamer
   ${catkin_LIBRARIES}
+  camera_info_manager
   ${OpenCV_LIBRARIES} )
 
 
