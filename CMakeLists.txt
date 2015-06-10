@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV REQUIRED core highgui videoio imgproc )
 
-
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
@@ -105,6 +104,14 @@ add_executable( video_player
 target_link_libraries(video_player
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES} )
+
+add_executable( stereo_streamer
+  src/stereo_streamer.cpp )
+target_link_libraries(stereo_streamer
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES} )
+
+
 
 
 
