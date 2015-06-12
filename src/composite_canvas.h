@@ -82,7 +82,13 @@ namespace AplCam {
 
     operator Mat &() { return canvas; }
     operator cv::_InputArray() { return cv::_InputArray(canvas); }
+
+    // Not 100% this distinction is necessary
+#if CV_MAJOR_VERSION > 2    // Only for OpenCV3
     operator cv::_InputOutputArray() { return cv::_InputOutputArray(canvas); }
+#else
+    //operator cv::InputOutputArray() { return cv::InputOutputArray(canvas); }
+#endif
 
     Mat &operator[]( int i ){ return roi[i]; }
     const Mat &operator[]( int i ) const { return roi[i]; }

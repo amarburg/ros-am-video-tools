@@ -113,7 +113,7 @@ add_executable( stereo_streamer
   src/stereo_streamer.cpp )
 target_link_libraries(stereo_streamer
   ${catkin_LIBRARIES}
-  camera_info_manager
+  /opt/ros/indigo/lib/libcamera_info_manager.so
   ${OpenCV_LIBRARIES} )
 
 
