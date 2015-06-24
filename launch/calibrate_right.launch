@@ -1,0 +1,9 @@
+<launch>
+<!-- Set this to "air" or "water" depending on where the cameras are operating -->
+<!-- <arg name="modality" default="air"/> -->
+
+<include file="$(find video_tools)/launch/calibrate_left.launch">
+<arg name="calibrate_which" value="right" />
+</include>
+
+</launch>
