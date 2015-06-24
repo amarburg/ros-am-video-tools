@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-find_package(OpenCV REQUIRED core highgui videoio imgproc )
+find_package(OpenCV REQUIRED core highgui imgproc )
 
 ################################################
 ## Declare ROS messages, services and actions ##
