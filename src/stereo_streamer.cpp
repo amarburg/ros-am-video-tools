@@ -60,13 +60,12 @@ int main(int argc, char **argv) {
     rightName = "right";
   }
 
-  camera_info_manager::CameraInfoManager leftInfo( leftNh ),
-                                         rightInfo( rightNh );
-
-  leftInfo.setCameraName( leftName );
-  rightInfo.setCameraName( rightName );
+  camera_info_manager::CameraInfoManager leftInfo( leftNh, leftName ),
+	  rightInfo( rightNh, rightName );
 
 
+  ROS_INFO( "Left camera is named \"%s\"", leftName.c_str() );
+  ROS_INFO( "Right camera is named \"%s\"", rightName.c_str() );
 
   ROS_INFO("Opening stereo file %s", videoFile.c_str() );
 
@@ -84,22 +83,25 @@ int main(int argc, char **argv) {
   sensor_msgs::ImagePtr msg;
 
   // Use default fps if video files doesn't specify
-  float fps = cap.fps();
+  float fps = cap.fps() / 5;
   if( fps < 0 ) fps = 30.0;
 
   ros::Rate loop_rate( fps );
-  while( cap.read( canvas ) ) {
+  while( nh.ok() ) {
+	  if( cap.read( canvas ) ) {
 
-    //TODO:  Compensate for time of processing
-    msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[0]).toImageMsg();
-    leftPub.publish(msg);
+		  //TODO:  Compensate for time of processing
+		  msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[0]).toImageMsg();
+		  leftPub.publish(msg);
 
-    msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[1]).toImageMsg();
-    rightPub.publish(msg);
+		  msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[1]).toImageMsg();
+		  rightPub.publish(msg);
 
 
-    ros::spinOnce();
-   // loop_rate.sleep();
+	  }
+
+	  ros::spinOnce();
+	  loop_rate.sleep();
 
   }
 }

@@ -1,0 +1,24 @@
+<launch>
+  <arg name="cam_name" default="camera_frame" />
+	<arg name="right_name" default="haptic1" />
+	<arg name="left_name" default="haptic2" />
+	<arg name="modality_local" default="air" />
+        <arg name="calibrate_which" default="left" />
+	<arg name="video_file" default="/home/aaron/workspace/vision_exp/camera_sonar_may_2015/exp/2015-06-01/henderson_dry_checkerboard1/video/composite.mkv" />
+
+	<node pkg="video_tools" type="stereo_streamer" name="$(arg cam_name)"
+		args="$(arg video_file)">
+		<param name="config/left/name" value="$(arg left_name)_$(arg modality_local)" />
+		<param name="config/right/name" value="$(arg right_name)_$(arg modality_local)" />
+		<remap from="camera" to="$(arg cam_name)" />
+	</node>
+
+	<node pkg="camera_calibration" type="cameracalibrator.py" name="$(arg cam_name)_calibrator" 
+		args="--pattern=chessboard --size=8x6 --square=0.07391 --k 3">
+		<remap from="left" to="$(arg cam_name)/left/image_raw" />
+		<remap from="right" to="$(arg cam_name)/right/image_raw" />
+		<remap from="left_camera" to="$(arg cam_name)/left" />
+		<remap from="right_camera" to="$(arg cam_name)/right" />
+	</node>
+
+</launch>
