@@ -17,7 +17,6 @@
 		args="--pattern=chessboard --size=8x6 --square=0.07391 -k 3">
 		<remap from="image" to="$(arg cam_name)/$(arg calibrate_which)/image_raw" />
 		<remap from="camera" to="$(arg cam_name)/$(arg calibrate_which)" />
-
 	</node>
 
 </launch>
