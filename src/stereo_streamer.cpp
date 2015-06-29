@@ -31,78 +31,82 @@ using namespace AplCam;
 
 int main(int argc, char **argv) {
 
-  ros::init(argc, argv, "stereo_streamer" );
+	ros::init(argc, argv, "stereo_streamer" );
 
-  if( argc < 2 ) {
-    ROS_ERROR("Video file should be specified on command line" );
-    return -1;
-  }
+	if( argc < 2 ) {
+		ROS_ERROR("Video file should be specified on command line" );
+		return -1;
+	}
 
-  string videoFile( argv[argc-1] );
+	string videoFile( argv[argc-1] );
 
-  ros::NodeHandle nh( ros::this_node::getName() ),
-                  leftNh( nh, "left" ),
-                  rightNh( nh, "right" );
-  image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh );
-  image_transport::Publisher leftPub = leftIt.advertise("image_raw", 1),
-                             rightPub = rightIt.advertise("image_raw", 1);
+	ros::NodeHandle nh( ros::this_node::getName() ),
+		leftNh( nh, "left" ),
+		rightNh( nh, "right" );
+	image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh );
+	image_transport::Publisher leftPub = leftIt.advertise("image_raw", 1),
+		rightPub = rightIt.advertise("image_raw", 1);
 
-  // Deal with camera info
-  string leftName, rightName;
+	// Deal with camera info
+	string leftName, rightName;
 
-  if( ! nh.searchParam("left/name", leftName ) ) {
-    ROS_INFO("Using default left camera name");
-    leftName = "left";
-  }
+	if(  nh.searchParam("config/left/name", leftName ) ) {
+		nh.getParam( leftName, leftName );
+	} else {
+		ROS_INFO("Using default left camera name");
+		leftName = "left";
+	}
 
-  if( ! nh.searchParam("right/name", rightName ) ) {
-    ROS_INFO("Using default right camera name");
-    rightName = "right";
-  }
+	if( nh.searchParam("config/right/name", rightName ) ) {
+		nh.getParam( rightName, rightName );
+	} else {
+		ROS_INFO("Using default right camera name");
+		rightName = "right";
+	}
 
-  camera_info_manager::CameraInfoManager leftInfo( leftNh, leftName ),
-	  rightInfo( rightNh, rightName );
-
-
-  ROS_INFO( "Left camera is named \"%s\"", leftName.c_str() );
-  ROS_INFO( "Right camera is named \"%s\"", rightName.c_str() );
-
-  ROS_INFO("Opening stereo file %s", videoFile.c_str() );
+	camera_info_manager::CameraInfoManager leftInfo( leftNh, leftName ),
+		rightInfo( rightNh, rightName );
 
 
-  CompositeVideo cap( videoFile );
+	ROS_INFO( "Left camera is named \"%s\"", leftName.c_str() );
+	ROS_INFO( "Right camera is named \"%s\"", rightName.c_str() );
 
-  //open the video stream and make sure it's opened
-  if( !cap.isOpened() )
-  {
-    ROS_ERROR( "Unable to open video file: %s", videoFile.c_str() );
-    return -1;
-  }
-
-  CompositeCanvas canvas;
-  sensor_msgs::ImagePtr msg;
-
-  // Use default fps if video files doesn't specify
-  float fps = cap.fps() / 5;
-  if( fps < 0 ) fps = 30.0;
-
-  ros::Rate loop_rate( fps );
-  while( nh.ok() ) {
-	  if( cap.read( canvas ) ) {
-
-		  //TODO:  Compensate for time of processing
-		  msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[0]).toImageMsg();
-		  leftPub.publish(msg);
-
-		  msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[1]).toImageMsg();
-		  rightPub.publish(msg);
+	ROS_INFO("Opening stereo file %s", videoFile.c_str() );
 
 
-	  }
+	CompositeVideo cap( videoFile );
 
-	  ros::spinOnce();
-	  loop_rate.sleep();
+	//open the video stream and make sure it's opened
+	if( !cap.isOpened() )
+	{
+		ROS_ERROR( "Unable to open video file: %s", videoFile.c_str() );
+		return -1;
+	}
 
-  }
+	CompositeCanvas canvas;
+	sensor_msgs::ImagePtr msg;
+
+	// Use default fps if video files doesn't specify
+	float fps = cap.fps() / 5;
+	if( fps < 0 ) fps = 30.0;
+
+	ros::Rate loop_rate( fps );
+	while( nh.ok() ) {
+		if( cap.read( canvas ) ) {
+
+			//TODO:  Compensate for time of processing
+			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[0]).toImageMsg();
+			leftPub.publish(msg);
+
+			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[1]).toImageMsg();
+			rightPub.publish(msg);
+
+
+		}
+
+		ros::spinOnce();
+		loop_rate.sleep();
+
+	}
 }
 

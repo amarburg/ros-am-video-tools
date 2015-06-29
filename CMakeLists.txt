@@ -116,6 +116,15 @@ target_link_libraries(stereo_streamer
   /opt/ros/indigo/lib/libcamera_info_manager.so
   ${OpenCV_LIBRARIES} )
 
+add_executable( mono_streamer
+  src/mono_streamer.cpp )
+target_link_libraries(mono_streamer
+  ${catkin_LIBRARIES}
+  /opt/ros/indigo/lib/libcamera_info_manager.so
+  ${OpenCV_LIBRARIES} )
+
+
+
 
 
 
