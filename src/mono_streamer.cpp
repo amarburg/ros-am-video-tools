@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
 	if( fps <= 0.0 ) fps = 29.97;
 	fps *= speedMult;
 
+	bool once = false;
 	ros::Rate loop_rate( fps );
 	while( nh.ok() ) {
 		if( cap.read( img ) ) {
@@ -88,7 +89,11 @@ int main(int argc, char **argv) {
 
 			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img ).toImageMsg();
 			pub.publish( msg );
+		} else if( once == false ) {
+			cout << "End of video file!" << endl;
+			ROS_INFO("End of video file!");
 
+			once = true;
 		}
 
 		ros::spinOnce();
