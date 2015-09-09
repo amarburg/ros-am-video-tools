@@ -3,15 +3,39 @@
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
-#include <opencv2/highgui/highgui.hpp>
+#include "opencv.h"
 #include <cv_bridge/cv_bridge.h>
+
+using namespace cv;
+using namespace std;
+
+double width = 0;
+Size scaleSize(0,0);
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
+  Mat imageOut;
+
   try
   {
-    cv::imshow("view", cv_bridge::toCvShare(msg, "bgr8")->image);
-    cv::waitKey(10);
+    if( width > 0 ) {
+      Mat fullImage( cv_bridge::toCvShare(msg, "bgr8")->image );
+      if( fullImage.size().width <= 0 ) return;
+
+      if( scaleSize.width == 0 || scaleSize.height == 0 ) {
+        // Initialize scaleSize
+        float scale = width / fullImage.size().width;
+        scaleSize.width = width;
+        scaleSize.height = round( scale * fullImage.size().height );
+      }
+
+      cv::resize( fullImage, imageOut, scaleSize );
+    } else {
+      imageOut = cv_bridge::toCvShare(msg, "bgr8")->image;
+    }
+
+    cv::imshow("view", imageOut );
+    cv::waitKey(1);
   }
   catch (cv_bridge::Exception& e)
   {
@@ -22,6 +46,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "video_player");
+  ros::NodeHandle nh( ros::this_node::getName() );
 
   std::string imageTopic = "";
   const std::string defaultImageTopic = "camera/image";
@@ -31,7 +56,16 @@ int main(int argc, char **argv)
     imageTopic = defaultImageTopic;
   }
 
-  ros::NodeHandle nh;
+  string widthKey;
+  if(  nh.searchParam("config/width", widthKey ) ) {
+    if( nh.getParam( widthKey, width ) ) {
+
+      ROS_INFO("Got width value of \"%f\" from key \"%s\"", width, widthKey.c_str() );
+
+    } else {
+      ROS_WARN("Thought I found a width at \"%s\", but I couldn't retrieve it.", widthKey.c_str() );
+    }
+  }
 
   image_transport::ImageTransport it(nh);
   image_transport::Subscriber sub = it.subscribe(imageTopic, 1, imageCallback);

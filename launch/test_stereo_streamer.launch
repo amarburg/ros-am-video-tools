@@ -13,6 +13,7 @@
 	</node>
 
 	<node pkg="ros_video_sources" type="video_player" name="video_player">
+    <param name="config/width" value="1024" />
 		<remap from="image" to="$(arg cam_name)/stereo/image_raw" />
 	</node>
 
