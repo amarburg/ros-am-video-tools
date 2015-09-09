@@ -1,0 +1,19 @@
+<launch>
+  <arg name="cam_name" default="camera_frame" />
+	<arg name="right_name" default="haptic1" />
+	<arg name="left_name" default="haptic2" />
+
+	<arg name="video_file" default="/home/aaron/workspace/vision_exp/camera_sonar_may_2015/exp/2015-06-02/henderson_wet_flange1/video/composite.mkv" />
+
+	<node pkg="ros_video_sources" type="stereo_streamer" name="$(arg cam_name)"
+		args="$(arg video_file)">
+		<param name="config/left/name" value="$(arg left_name)" />
+		<param name="config/right/name" value="$(arg right_name)" />
+		<remap from="camera" to="$(arg cam_name)" />
+	</node>
+
+	<node pkg="ros_video_sources" type="video_player" name="video_player">
+		<remap from="image" to="$(arg cam_name)/stereo/image_raw" />
+	</node>
+
+</launch>

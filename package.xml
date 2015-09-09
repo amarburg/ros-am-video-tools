@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
-  <name>video_tools</name>
+  <name>ros_video_sources</name>
   <version>0.0.0</version>
-  <description>The video_tools package</description>
+  <description>The ros_video_sources package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="amarburg@apl.washington.edu">aaron</maintainer>
@@ -36,7 +36,7 @@
   <build_depend>image_transport</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>camera_info_manager</build_depend>
-  
+
   <!-- Use run_depend for packages you need at runtime: -->
   <run_depend>cv_bridge</run_depend>
   <run_depend>image_transport</run_depend>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(video_tools)
+project(ros_video_sources)
 
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
