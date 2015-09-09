@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include <opencv2/core/core.hpp>
+#include "opencv.h"
 
 namespace AplCam {
 
@@ -48,8 +48,8 @@ namespace AplCam {
     CompositeCanvas( const Mat &mat0, const Mat &mat1, bool doCopy = true )
       : canvas()
     {
-      Size canvasSize( mat0.size().width + mat1.size().width, 
-          std::max(mat0.size().height, mat1.size().height) ); 
+      Size canvasSize( mat0.size().width + mat1.size().width,
+          std::max(mat0.size().height, mat1.size().height) );
 
       canvas.create( canvasSize, mat0.type() );
 
@@ -109,7 +109,7 @@ namespace AplCam {
       return out;
     }
 
-    cv::Point origin( int i ) 
+    cv::Point origin( int i )
     { return cv::Point( rect[i].x, rect[i].y ); }
 
 
@@ -141,4 +141,3 @@ namespace AplCam {
 }
 
 #endif
-

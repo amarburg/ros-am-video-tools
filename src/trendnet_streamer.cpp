@@ -1,5 +1,5 @@
 //
-// Based on demo code from: 
+// Based on demo code from:
 //   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
 //
 
@@ -7,18 +7,21 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#if CV_MAJOR_VERSION > 2    // Only for OpenCV3
-  #include <opencv2/videoio/videoio.hpp>
-#endif
+#include "opencv.h"
 #include <iostream>
 
 #include "config.h"
 
 #define TN_DEFAULT_IPADDR   "10.0.95.1"
 #define TN_DEFAULT_STREAM    ""
+
+#ifndef TN_USERNAME
+  #define TN_USERNAME ""
+#endif
+
+#ifndef TN_PASSWD
+  #define TN_PASSWD   ""
+#endif
 
 using namespace cv;
 
@@ -28,7 +31,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh( ros::this_node::getName() );;
   image_transport::ImageTransport it(nh);
   image_transport::Publisher pub = it.advertise("image_raw", 1);
-  
+
   const std::string userName( TN_USERNAME ),
                     password( TN_PASSWD );
   std::string address, stream;
@@ -49,11 +52,17 @@ int main(int argc, char **argv) {
     stream = TN_DEFAULT_STREAM;
   }
 
+  // Assemble URI to the RTSP server
+  const std::string videoStreamAddress = "rtsp://";
+  if( userName.length() > 0 ) {
+    videoStreamAddress += userName;
+    if( password.length() > 0 ) videoStreamAddress += string(":") + password;
+    videoStreamAddress += "@";
+  }
+  videoStreamAddress += address + "/" + stream;
 
-
-  const std::string videoStreamAddress = "rtsp://" + userName + ":" + password + "@" + address + "/" + stream;
   //const std::string videoStreamAddress = "rtp://127.0.0.1:12346/";
-  
+
   ROS_INFO("Opening %s", videoStreamAddress.c_str() );
 
   VideoCapture cap( videoStreamAddress );
@@ -87,4 +96,3 @@ int main(int argc, char **argv) {
 
   }
 }
-

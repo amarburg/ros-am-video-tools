@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include <opencv2/core/core.hpp>
+#include "opencv.h"
 
 #include "composite_canvas.h"
 
@@ -15,14 +15,14 @@ namespace AplCam {
   using cv::Size;
 
   struct CompositeVideo
-  { 
+  {
     CompositeVideo( const std::string &filepath )
       : _filepath( filepath ), _video( filepath ) {;}
 
     bool isOpened( void ) const { return _video.isOpened(); }
 
     bool read(  CompositeCanvas &canvas )
-    { 
+    {
       Mat frame;
       if( _video.read( frame ) ) {
         canvas = CompositeCanvas( frame );
@@ -56,4 +56,3 @@ namespace AplCam {
 }
 
 #endif
-

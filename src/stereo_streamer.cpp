@@ -1,5 +1,5 @@
 //
-// Based on demo code from: 
+// Based on demo code from:
 //   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
 //
 
@@ -8,19 +8,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <camera_info_manager/camera_info_manager.h>
 
-#if CV_MAJOR_VERSION > 2    // Only for OpenCV3
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/videoio.hpp>
-#else
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
 #include <iostream>
-
-#include "config.h"
 
 #include "composite_video.h"
 #include "composite_canvas.h"
@@ -42,10 +30,12 @@ int main(int argc, char **argv) {
 
 	ros::NodeHandle nh( ros::this_node::getName() ),
 		leftNh( nh, "left" ),
-		rightNh( nh, "right" );
-	image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh );
+		rightNh( nh, "right" ),
+    stereoNh( nh, "stereo" );
+	image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh ), stereoIt( stereoNH );
 	image_transport::Publisher leftPub = leftIt.advertise("image_raw", 1),
-		rightPub = rightIt.advertise("image_raw", 1);
+													   rightPub = rightIt.advertise("image_raw", 1),
+														 stereoPub = stereoIt.advertise("image_raw", 1);
 
 	// Deal with camera info
 	string leftName, rightName;
@@ -65,14 +55,13 @@ int main(int argc, char **argv) {
 	}
 
 	camera_info_manager::CameraInfoManager leftInfo( leftNh, leftName ),
-		rightInfo( rightNh, rightName );
+																				 rightInfo( rightNh, rightName );
 
 
 	ROS_INFO( "Left camera is named \"%s\"", leftName.c_str() );
 	ROS_INFO( "Right camera is named \"%s\"", rightName.c_str() );
 
 	ROS_INFO("Opening stereo file %s", videoFile.c_str() );
-
 
 	CompositeVideo cap( videoFile );
 
@@ -88,7 +77,7 @@ int main(int argc, char **argv) {
 
 	// Use default fps if video files doesn't specify
 	float fps = cap.fps() / 5;
-	if( fps < 0 ) fps = 30.0;
+	if( fps < 0 ) fps = 29.97;
 
 	ros::Rate loop_rate( fps );
 	while( nh.ok() ) {
@@ -101,6 +90,8 @@ int main(int argc, char **argv) {
 			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas[1]).toImageMsg();
 			rightPub.publish(msg);
 
+			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas).toImageMsg();
+			stereoPub.publish(msg);
 
 		}
 
@@ -109,4 +100,3 @@ int main(int argc, char **argv) {
 
 	}
 }
-

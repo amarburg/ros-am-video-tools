@@ -1,5 +1,5 @@
 //
-// Based on demo code from: 
+// Based on demo code from:
 //   http://wiki.ros.org/image_transport/Tutorials/PublishingImages
 //
 
@@ -8,16 +8,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <camera_info_manager/camera_info_manager.h>
 
-#if CV_MAJOR_VERSION > 2    // Only for OpenCV3
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/videoio.hpp>
-#else
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
+#include "opencv.h"
 #include <iostream>
 
 #include "config.h"
@@ -101,4 +92,3 @@ int main(int argc, char **argv) {
 
 	}
 }
-
