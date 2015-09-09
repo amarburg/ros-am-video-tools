@@ -10,7 +10,7 @@
 #include "opencv.h"
 #include <iostream>
 
-#include "config.h"
+#include "trendnet_config.h"
 
 #define TN_DEFAULT_IPADDR   "10.0.95.1"
 #define TN_DEFAULT_STREAM    ""
@@ -23,6 +23,7 @@
   #define TN_PASSWD   ""
 #endif
 
+using namespace std;
 using namespace cv;
 
 int main(int argc, char **argv) {
@@ -32,12 +33,11 @@ int main(int argc, char **argv) {
   image_transport::ImageTransport it(nh);
   image_transport::Publisher pub = it.advertise("image_raw", 1);
 
-  const std::string userName( TN_USERNAME ),
+  const string userName( TN_USERNAME ),
                     password( TN_PASSWD );
-  std::string address, stream;
+  string address, stream;
 
-
-  std::string key;
+  string key;
   if( nh.searchParam("ip_addr", key ) ) {
     ROS_INFO("Found it at: %s", key.c_str() );
   }
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   }
 
   // Assemble URI to the RTSP server
-  const std::string videoStreamAddress = "rtsp://";
+  string videoStreamAddress = "rtsp://";
   if( userName.length() > 0 ) {
     videoStreamAddress += userName;
     if( password.length() > 0 ) videoStreamAddress += string(":") + password;
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   }
   videoStreamAddress += address + "/" + stream;
 
-  //const std::string videoStreamAddress = "rtp://127.0.0.1:12346/";
+  //const string videoStreamAddress = "rtp://127.0.0.1:12346/";
 
   ROS_INFO("Opening %s", videoStreamAddress.c_str() );
 

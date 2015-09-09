@@ -11,8 +11,6 @@
 #include "opencv.h"
 #include <iostream>
 
-#include "config.h"
-
 #include "composite_video.h"
 #include "composite_canvas.h"
 

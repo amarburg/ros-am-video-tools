@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 		leftNh( nh, "left" ),
 		rightNh( nh, "right" ),
     stereoNh( nh, "stereo" );
-	image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh ), stereoIt( stereoNH );
+	image_transport::ImageTransport leftIt(leftNh), rightIt( rightNh ), stereoIt( stereoNh );
 	image_transport::Publisher leftPub = leftIt.advertise("image_raw", 1),
 													   rightPub = rightIt.advertise("image_raw", 1),
 														 stereoPub = stereoIt.advertise("image_raw", 1);

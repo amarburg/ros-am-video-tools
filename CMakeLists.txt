@@ -4,6 +4,7 @@ project(video_tools)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
+  camera_info_manager
   roscpp
 )
 
@@ -74,7 +75,7 @@ find_package(OpenCV REQUIRED core highgui imgproc )
 #  LIBRARIES trendnet_streamer
 
 catkin_package(
-  CATKIN_DEPENDS cv_bridge camera_info_manager image_transport roscpp 
+  CATKIN_DEPENDS cv_bridge camera_info_manager image_transport roscpp
   DEPENDS OpenCV
 )
 
@@ -87,8 +88,6 @@ catkin_package(
 # include_directories(include)
 include_directories(
   include
-  # Catkin refuses to find this path automatically...
-  /Users/aaron/workspace/ros/ros_ws/src/image_common/camera_info_manager/include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -113,14 +112,12 @@ add_executable( stereo_streamer
   src/stereo_streamer.cpp )
 target_link_libraries(stereo_streamer
   ${catkin_LIBRARIES}
-  /opt/ros/indigo/lib/libcamera_info_manager.so
   ${OpenCV_LIBRARIES} )
 
 add_executable( mono_streamer
   src/mono_streamer.cpp )
 target_link_libraries(mono_streamer
   ${catkin_LIBRARIES}
-  /opt/ros/indigo/lib/libcamera_info_manager.so
   ${OpenCV_LIBRARIES} )
 
 
