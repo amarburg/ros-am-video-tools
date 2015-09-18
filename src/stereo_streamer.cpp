@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+#include <tclap/CmdLine.h>
+
 #include "composite_video.h"
 #include "composite_canvas.h"
 
@@ -17,16 +19,55 @@ using namespace std;
 using namespace cv;
 using namespace AplCam;
 
+class StreamerOpts {
+public:
+
+	StreamerOpts( int argc, char **argv )
+	: valid( parseArgs( argc, argv ) )
+	{ ; }
+
+	bool doLoop;
+	string videoFile;
+
+	bool valid;
+
+	bool parseArgs( int argc, char **argv ) {
+
+		try {
+			TCLAP::CmdLine cmd("stereo_streamer", ' ', "0.1" );
+
+			TCLAP::SwitchArg doLoopArg("l", "loop", "", cmd, false );
+			TCLAP::UnlabeledValueArg< std::string > videoFileArg("video-file", "Video file", true, "", "file name", cmd );
+
+			cmd.parse( argc, argv );
+
+			doLoop = doLoopArg.getValue();
+			videoFile = videoFileArg.getValue();
+
+		} catch( TCLAP::ArgException &e ) {
+			ROS_ERROR( "error: %s for arg %s", e.error().c_str(), e.argId().c_str() );
+			return false;
+		}
+
+		return validate( );
+	}
+
+	bool validate( void )
+	{
+		return true;
+	}
+
+};
+
+
 int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "stereo_streamer" );
 
-	if( argc < 2 ) {
-		ROS_ERROR("Video file should be specified on command line" );
-		return -1;
-	}
+	StreamerOpts opts( argc, argv );
+	if( !opts.valid ) exit(-1);
 
-	string videoFile( argv[argc-1] );
+	string videoFile( opts.videoFile );
 
 	ros::NodeHandle nh( ros::this_node::getName() ),
 		leftNh( nh, "left" ),
@@ -80,6 +121,7 @@ int main(int argc, char **argv) {
 	if( fps < 0 ) fps = 29.97;
 
 	ros::Rate loop_rate( fps );
+
 	while( nh.ok() ) {
 		if( cap.read( canvas ) ) {
 
@@ -93,10 +135,18 @@ int main(int argc, char **argv) {
 			msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", canvas).toImageMsg();
 			stereoPub.publish(msg);
 
+		} else {
+			if( ! opts.doLoop ) break;
+
+			// Should put some flapping control in here, it's possible
+			// to get here every loop if the video reader has failed
+			cap.rewind();
 		}
 
 		ros::spinOnce();
 		loop_rate.sleep();
 
 	}
+
+
 }

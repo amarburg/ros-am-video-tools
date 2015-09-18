@@ -10,6 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV REQUIRED core highgui imgproc )
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package( TCLAP REQUIRED )
+
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
@@ -110,6 +113,8 @@ target_link_libraries(video_player
 
 add_executable( stereo_streamer
   src/stereo_streamer.cpp )
+target_include_directories( stereo_streamer PUBLIC
+  ${TCLAP_INCLUDE_DIR} )
 target_link_libraries(stereo_streamer
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES} )
